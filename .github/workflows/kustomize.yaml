@@ -1,0 +1,23 @@
+name: Validate Kustomize builds
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-kustomize:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build every overlay
+        run: |
+          shopt -s nullglob
+          for overlay in apps/*/overlays/*/; do
+            echo "Building ${overlay}"
+            kustomize build "${overlay}" > /dev/null
+          done
