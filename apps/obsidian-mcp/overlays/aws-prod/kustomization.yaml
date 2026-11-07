@@ -1,0 +1,31 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: obsidian-mcp
+
+resources:
+  - ../../providers/aws
+
+patches:
+  - target:
+      kind: HTTPRoute
+      name: obsidian-mcp
+    patch: |-
+      - op: add
+        path: /spec/hostnames
+        value:
+          - obsidian.api.vwong.dev
+
+configMapGenerator:
+  - name: mcp
+    literals:
+      - PUBLIC_URL=https://obsidian.api.vwong.dev
+      - AUDIENCE=https://obsidian.api.vwong.dev
+
+images:
+  - name: obsidian-mcp/mcp
+    newName: 788455525284.dkr.ecr.us-east-1.amazonaws.com/obsidian-mcp/mcp
+    newTag: f2bffb9292108f3670319bb620a2306860aacce5
+  - name: obsidian-mcp/sync
+    newName: 788455525284.dkr.ecr.us-east-1.amazonaws.com/obsidian-mcp/sync
+    newTag: f2bffb9292108f3670319bb620a2306860aacce5

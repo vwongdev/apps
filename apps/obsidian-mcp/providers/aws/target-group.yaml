@@ -1,0 +1,13 @@
+# The MCP endpoint requires a token, so the load balancer checks the unauthenticated health endpoint.
+apiVersion: gateway.k8s.aws/v1
+kind: TargetGroupConfiguration
+metadata:
+  name: obsidian-mcp
+spec:
+  targetReference:
+    name: obsidian-mcp
+  defaultConfiguration:
+    targetType: ip
+    healthCheckConfig:
+      healthCheckPath: /healthz
+      healthCheckProtocol: HTTP
