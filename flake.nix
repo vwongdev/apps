@@ -15,7 +15,9 @@
         {
           default = pkgs.mkShell {
             packages = with pkgs; [
+              awscli2
               gh
+              google-cloud-sdk
               kubectl
               kustomize
             ];
