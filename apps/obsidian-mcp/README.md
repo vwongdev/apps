@@ -2,27 +2,21 @@
 Manifests for [obsidian-mcp](https://github.com/VWongDev/obsidian-mcp).
 
 ## Secrets
-The ExternalSecrets in [`base/secrets.yaml`](base/secrets.yaml) read two secrets from the ClusterSecretStore `secrets`: AWS Secrets Manager in the cluster's account and region, or GCP Secret Manager in the cluster's project. Each is a JSON object whose keys become environment variables:
+[`base/secrets.yaml`](base/secrets.yaml) syncs two JSON secrets from AWS Secrets Manager or GCP Secret Manager. Each key becomes an environment variable.
 
 | Secret | Key | Value |
 |---|---|---|
-| `obsidian-mcp-sync` | `OBSIDIAN_AUTH_TOKEN` | Obsidian account token, from the [sync client](https://github.com/VWongDev/obsidian-mcp#sync-client) login |
-| | `VAULT_NAME` | Remote vault name or ID |
-| | `VAULT_PASSWORD` | End-to-end encryption password; omit if the vault has none |
-| `obsidian-mcp-server` | `ISSUER_URL` | Identity provider issuer, such as `https://<tenant>.auth0.com/` |
-| | `ALLOWED_SUBJECTS` | Comma-separated token subjects allowed access, such as `auth0\|123` |
+| `obsidian-mcp-sync` | `OBSIDIAN_AUTH_TOKEN` | Obsidian [account token](https://github.com/VWongDev/obsidian-mcp#sync-client) |
+| | `VAULT_NAME` | Vault name or ID |
+| | `VAULT_PASSWORD` | Encryption password, if any |
+| `obsidian-mcp-server` | `ISSUER_URL` | Issuer, such as `https://<tenant>.auth0.com/` |
+| | `ALLOWED_SUBJECTS` | Comma-separated allowed token subjects |
 
-`PUBLIC_URL` and `AUDIENCE` differ per deployment, so each overlay sets them instead.
+Overlays set `PUBLIC_URL` and `AUDIENCE`.
 
-Create them from JSON files, such as `sync.json`:
-```json
-{"OBSIDIAN_AUTH_TOKEN": "...", "VAULT_NAME": "...", "VAULT_PASSWORD": "..."}
-```
 ```sh
-# AWS
 aws secretsmanager create-secret --name obsidian-mcp-sync --secret-string file://sync.json
-# GCP
 gcloud secrets create obsidian-mcp-sync --data-file sync.json
 ```
 
-On k3d, add them to kube's local secret store instead, copied from [`providers/k3d/secret-store.example.yaml`](https://github.com/VWongDev/kube/blob/main/providers/k3d/secret-store.example.yaml).
+On k3d, use kube's [secret store example](https://github.com/VWongDev/kube/blob/main/providers/k3d/secret-store.example.yaml).
