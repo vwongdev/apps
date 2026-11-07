@@ -35,6 +35,8 @@ Scope indicates the area of the codebase affected. Multiple scopes can be used w
 
 When an app scope is used, it comes first, followed by any other scopes in alphabetical order.
 
+Provider scopes (`aws`, `gcp`, `k3d`) mark provider-specific changes. Omit them when the change applies the same way across providers and another scope already covers it, such as updating an app's image tags in every overlay.
+
 ## Examples
 
 ```
