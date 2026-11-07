@@ -54,13 +54,8 @@ jobs:
             exit 1
           fi
           for overlay in "${overlays[@]}"; do
-            # awk keeps the file's formatting, which yq would rewrite
-            awk -v prefix="${APP}/" -v tag="${TAG}" '
-              /^[[:space:]]*(- )?name:/ { name = $0; sub(/.*name:[[:space:]]*/, "", name); matched = index(name, prefix) == 1 }
-              matched && /^[[:space:]]*newTag:/ { sub(/newTag:.*/, "newTag: " tag) }
-              { print }
-            ' "${overlay}" > "${overlay}.tmp"
-            mv "${overlay}.tmp" "${overlay}"
+            # sed keeps the file's formatting, which yq and kustomize edit rewrite
+            sed -i "\|name: ${APP}/|,/newTag:/ s/newTag:.*/newTag: ${TAG}/" "${overlay}"
             kustomize build "$(dirname "${overlay}")" > /dev/null
           done
           git diff --stat
