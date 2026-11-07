@@ -18,6 +18,7 @@ patches:
 
 configMapGenerator:
   - name: mcp
+    behavior: merge
     literals:
       - PUBLIC_URL=http://localhost:8080
       - AUDIENCE=http://localhost:8080

@@ -10,3 +10,12 @@ resources:
   - secrets.yaml
   - network-policy.yaml
   - route.yaml
+
+configMapGenerator:
+  - name: mcp
+    literals:
+      - ISSUER_URL=https://vwong.au.auth0.com/
+      - ALLOWED_SUBJECTS=auth0|6aeeecf924df31b5cbd5ddf5
+  - name: sync
+    literals:
+      - VAULT_NAME=knowledge

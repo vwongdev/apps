@@ -18,6 +18,7 @@ patches:
 
 configMapGenerator:
   - name: mcp
+    behavior: merge
     literals:
       - PUBLIC_URL=https://obsidian.gcp.vwong.dev
       - AUDIENCE=https://obsidian.gcp.vwong.dev

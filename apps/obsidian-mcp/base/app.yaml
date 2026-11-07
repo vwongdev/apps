@@ -39,8 +39,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: mcp
-            - secretRef:
-                name: mcp
           readinessProbe:
             httpGet:
               path: /healthz
@@ -67,6 +65,8 @@ spec:
         - name: sync
           image: obsidian-mcp/sync
           envFrom:
+            - configMapRef:
+                name: sync
             - secretRef:
                 name: sync
           resources:
