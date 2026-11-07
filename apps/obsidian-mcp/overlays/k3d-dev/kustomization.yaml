@@ -1,0 +1,29 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: obsidian-mcp
+
+resources:
+  - ../../providers/k3d
+
+# Local only: reach the server with port-forwarding, since the k3d Gateway has no HTTPS listener.
+patches:
+  - patch: |-
+      $patch: delete
+      apiVersion: gateway.networking.k8s.io/v1
+      kind: HTTPRoute
+      metadata:
+        name: obsidian-mcp
+        namespace: obsidian-mcp
+
+configMapGenerator:
+  - name: mcp
+    literals:
+      - PUBLIC_URL=http://localhost:8080
+      - AUDIENCE=http://localhost:8080
+
+images:
+  - name: obsidian-mcp/mcp
+    newTag: dev
+  - name: obsidian-mcp/sync
+    newTag: dev
