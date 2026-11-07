@@ -26,7 +26,7 @@ configMapGenerator:
 images:
   - name: obsidian-mcp/mcp
     newName: 788455525284.dkr.ecr.us-east-1.amazonaws.com/obsidian-mcp/mcp
-    newTag: 66bf4f60031aa028466807ddd0017220550ba644
+    newTag: 5754aee83fbb99d5f91b72ee2f00e5e8e4e5cced
   - name: obsidian-mcp/sync
     newName: 788455525284.dkr.ecr.us-east-1.amazonaws.com/obsidian-mcp/sync
-    newTag: 66bf4f60031aa028466807ddd0017220550ba644
+    newTag: 5754aee83fbb99d5f91b72ee2f00e5e8e4e5cced
