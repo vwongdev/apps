@@ -61,6 +61,7 @@ jobs:
           git diff --stat
 
       - uses: peter-evans/create-pull-request@v7
+        id: cpr
         with:
           token: ${{ steps.app-token.outputs.token }}
           branch: bump-image/${{ inputs.app }}
@@ -69,3 +70,12 @@ jobs:
           body: Set ${{ inputs.app }} production images to `${{ inputs.tag }}`.
           sign-commits: true
           delete-branch: true
+
+      - name: Enable auto-merge
+        if: contains(fromJSON('["created", "updated"]'), steps.cpr.outputs.pull-request-operation)
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR: ${{ steps.cpr.outputs.pull-request-number }}
+          # --subject stops GitHub appending the PR number to the squash commit
+          MESSAGE: "${{ inputs.commit-message || format('chore({0}): Update image to latest commit', inputs.app) }}"
+        run: gh pr merge --auto --squash --subject "${MESSAGE}" "${PR}" --repo VWongDev/apps
