@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+  - health-check.yaml
+
+# Load balancer proxies and health checks reach backends from Google Front End ranges.
+patches:
+  - target:
+      kind: NetworkPolicy
+      name: obsidian-mcp
+    patch: |-
+      - op: add
+        path: /spec/ingress/0/from
+        value:
+          - ipBlock:
+              cidr: 35.191.0.0/16
+          - ipBlock:
+              cidr: 130.211.0.0/22
