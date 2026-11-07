@@ -1,0 +1,71 @@
+name: Bump image
+
+on:
+  workflow_call:
+    inputs:
+      app:
+        description: App directory under apps/, also the prefix of its image names
+        type: string
+        required: true
+      tag:
+        description: Image tag to deploy
+        type: string
+        default: ${{ github.sha }}
+      commit-message:
+        description: Commit message and pull request title
+        type: string
+        default: ""
+    secrets:
+      BUMP_APP_ID:
+        required: true
+      BUMP_APP_PRIVATE_KEY:
+        required: true
+
+concurrency:
+  group: bump-image-${{ inputs.app }}
+  cancel-in-progress: true
+
+jobs:
+  bump-image:
+    runs-on: ubuntu-24.04
+    steps:
+      - id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.BUMP_APP_ID }}
+          private-key: ${{ secrets.BUMP_APP_PRIVATE_KEY }}
+          owner: VWongDev
+          repositories: apps
+
+      - uses: actions/checkout@v5
+        with:
+          repository: VWongDev/apps
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Set image tag in production overlays
+        env:
+          APP: ${{ inputs.app }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          shopt -s nullglob
+          overlays=(apps/"${APP}"/overlays/*-prod/kustomization.yaml)
+          if [ ${#overlays[@]} -eq 0 ]; then
+            echo "::error::No production overlays found for ${APP}"
+            exit 1
+          fi
+          for overlay in "${overlays[@]}"; do
+            # sed keeps the file's formatting, which yq and kustomize edit rewrite
+            sed -i "\|name: ${APP}/|,/newTag:/ s/newTag:.*/newTag: ${TAG}/" "${overlay}"
+            kustomize build "$(dirname "${overlay}")" > /dev/null
+          done
+          git diff --stat
+
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          branch: bump-image/${{ inputs.app }}
+          commit-message: "${{ inputs.commit-message || format('chore({0}): Update image to latest commit', inputs.app) }}"
+          title: "${{ inputs.commit-message || format('chore({0}): Update image to latest commit', inputs.app) }}"
+          body: Set ${{ inputs.app }} production images to `${{ inputs.tag }}`.
+          sign-commits: true
+          delete-branch: true
