@@ -25,3 +25,19 @@ Build the manifests for an environment:
 ```sh
 kustomize build apps/app-name/overlays/aws-prod
 ```
+
+## Updating Images
+Source repos call the [`bump-image`](.github/workflows/bump-image.yaml) reusable workflow after pushing images. It sets the tag of every `app-name/...` image in the app's `*-prod` overlays and opens a pull request.
+
+```yaml
+bump-image:
+  needs: build
+  uses: VWongDev/apps/.github/workflows/bump-image.yaml@main
+  with:
+    app: app-name
+    # tag: defaults to the caller's commit SHA
+    # commit-message: defaults to "chore(app-name): Update image to latest commit"
+  secrets: inherit
+```
+
+The calling repo needs `BUMP_APP_ID` and `BUMP_APP_PRIVATE_KEY` secrets for a GitHub App installed on this repo with read and write access to contents and pull requests.
