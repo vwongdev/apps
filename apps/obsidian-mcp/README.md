@@ -25,4 +25,4 @@ aws secretsmanager create-secret --name obsidian-mcp-sync --secret-string file:/
 gcloud secrets create obsidian-mcp-sync --data-file sync.json
 ```
 
-On k3d, add them to the local secret store in [kube](https://github.com/VWongDev/kube) instead.
+On k3d, add them to kube's local secret store instead, copied from [`providers/k3d/secret-store.example.yaml`](https://github.com/VWongDev/kube/blob/main/providers/k3d/secret-store.example.yaml).
