@@ -26,7 +26,7 @@ configMapGenerator:
 images:
   - name: obsidian-mcp/mcp
     newName: us-east1-docker.pkg.dev/vwongdev-kube/kube/obsidian-mcp/mcp
-    newTag: 5754aee83fbb99d5f91b72ee2f00e5e8e4e5cced
+    newTag: b10cabbce898a5adebffc5026e5aa4679aca9056
   - name: obsidian-mcp/sync
     newName: us-east1-docker.pkg.dev/vwongdev-kube/kube/obsidian-mcp/sync
-    newTag: 5754aee83fbb99d5f91b72ee2f00e5e8e4e5cced
+    newTag: b10cabbce898a5adebffc5026e5aa4679aca9056
